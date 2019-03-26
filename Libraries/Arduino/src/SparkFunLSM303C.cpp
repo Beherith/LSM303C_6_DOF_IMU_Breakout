@@ -44,22 +44,17 @@ status_t LSM303C::begin(InterfaceMode_t im, MAG_DO_t modr, MAG_FS_t mfs,
     debug_println("Setting up SPI");
     // Setup pins for SPI
     // CS & CLK must be outputs DDRxn = 1
-    bitSet(DIR_REG, CSBIT_MAG);
-    bitSet(DIR_REG, CSBIT_XL);
-    bitSet(DIR_REG, CLKBIT);
+    //bitSet(DIR_REG, CSBIT_MAG);
+    //bitSet(DIR_REG, CSBIT_XL);
+    //bitSet(DIR_REG, CLKBIT);
     // Deselect SPI chips
-    bitSet(CSPORT_MAG, CSBIT_MAG);
-    bitSet(CSPORT_XL, CSBIT_XL);
+    //bitSet(CSPORT_MAG, CSBIT_MAG);
+    //bitSet(CSPORT_XL, CSBIT_XL);
     // Clock polarity (CPOL) = 1
-    bitSet(CLKPORT, CLKBIT);
+    //bitSet(CLKPORT, CLKBIT);
     // SPI Serial Interface Mode (SIM) bits must be set
     SPI_WriteByte(ACC, ACC_CTRL4, 0b111);
     SPI_WriteByte(MAG, MAG_CTRL_REG3, _BV(2));
-  }
-  else
-  {
-    Wire.begin();
-    Wire.setClock(400000L);
   }
   ////////// Initialize Magnetometer //////////
   // Initialize magnetometer output data rate
@@ -741,7 +736,7 @@ uint8_t LSM303C::SPI_ReadByte(CHIP_t chip, uint8_t data)
   data |= _BV(7);
 
   // Set data pin to output
-  bitSet(DIR_REG, DATABIT);
+  //bitSet(DIR_REG, DATABIT);
  
   noInterrupts();
 
@@ -749,28 +744,28 @@ uint8_t LSM303C::SPI_ReadByte(CHIP_t chip, uint8_t data)
   switch (chip)
   {
   case MAG:
-    bitClear(CSPORT_MAG, CSBIT_MAG);
-    bitSet(CSPORT_XL, CSBIT_XL);
+    //bitClear(CSPORT_MAG, CSBIT_MAG);
+    //bitSet(CSPORT_XL, CSBIT_XL);
     break;
   case ACC:
-    bitClear(CSPORT_XL, CSBIT_XL);
-    bitSet(CSPORT_MAG, CSBIT_MAG);
+    //bitClear(CSPORT_XL, CSBIT_XL);
+    //bitSet(CSPORT_MAG, CSBIT_MAG);
     break;
   }
 
   // Shift out 8-bit address
   for(counter = 8; counter; counter--)
   {
-    bitWrite(DATAPORTO, DATABIT, data & 0x80);
+    //bitWrite(DATAPORTO, DATABIT, data & 0x80);
     // Data is setup, so drop clock edge
-    bitClear(CLKPORT, CLKBIT);
-    bitSet(CLKPORT, CLKBIT);
+    //bitClear(CLKPORT, CLKBIT);
+    //bitSet(CLKPORT, CLKBIT);
     // Shift off sent bit
     data <<= 1;
   }
   
   // Switch data pin to input (0 = INPUT)
-  bitClear(DIR_REG, DATABIT);
+  //bitClear(DIR_REG, DATABIT);
 
   // Shift in register data from address
   for(counter = 8; counter; counter--)
@@ -778,23 +773,20 @@ uint8_t LSM303C::SPI_ReadByte(CHIP_t chip, uint8_t data)
     // Shift data to the left.  Remains 0 after first shift
     data <<= 1;
 
-    bitClear(CLKPORT, CLKBIT);
+    //bitClear(CLKPORT, CLKBIT);
     // Sample on rising egde
-    bitSet(CLKPORT, CLKBIT);
-    if (bitRead(DATAPORTI, DATABIT))
-    {
-      data |= 0x01;
-    }
+    //bitSet(CLKPORT, CLKBIT);
+
   }
 
   // Unselect chip
   switch (chip)
   {
   case MAG:
-    bitSet(CSPORT_MAG, CSBIT_MAG);
+    //bitSet(CSPORT_MAG, CSBIT_MAG);
     break;
   case ACC:
-    bitSet(CSPORT_XL, CSBIT_XL);
+    //bitSet(CSPORT_XL, CSBIT_XL);
     break;
   }
 
@@ -823,7 +815,7 @@ status_t LSM303C::SPI_WriteByte(CHIP_t chip, uint8_t reg, uint8_t data)
   twoBytes = reg << 8 | data;
 
   // Set data pin to output
-  bitSet(DIR_REG, DATABIT);
+  //bitSet(DIR_REG, DATABIT);
  
   noInterrupts();
 
@@ -831,23 +823,23 @@ status_t LSM303C::SPI_WriteByte(CHIP_t chip, uint8_t reg, uint8_t data)
   switch (chip)
   {
   case MAG:
-    bitClear(CSPORT_MAG, CSBIT_MAG);
-    bitSet(CSPORT_XL, CSBIT_XL);
+    //bitClear(CSPORT_MAG, CSBIT_MAG);
+    //bitSet(CSPORT_XL, CSBIT_XL);
     break;
   case ACC:
-    bitClear(CSPORT_XL, CSBIT_XL);
-    bitSet(CSPORT_MAG, CSBIT_MAG);
+    //bitClear(CSPORT_XL, CSBIT_XL);
+    //bitSet(CSPORT_MAG, CSBIT_MAG);
     break;
   }
 
   // Shift out 8-bit address & 8-bit data
   for(counter = 16; counter; counter--)
   {
-    bitWrite(DATAPORTO, DATABIT, twoBytes & 0x8000);
+    //bitWrite(DATAPORTO, DATABIT, twoBytes & 0x8000);
     
     // Data is setup, so drop clock edge
-    bitClear(CLKPORT, CLKBIT);
-    bitSet(CLKPORT, CLKBIT);
+    //bitClear(CLKPORT, CLKBIT);
+    //bitSet(CLKPORT, CLKBIT);
     // Shift off sent bit
     twoBytes <<= 1;
   }
@@ -856,17 +848,17 @@ status_t LSM303C::SPI_WriteByte(CHIP_t chip, uint8_t reg, uint8_t data)
   switch (chip)
   {
   case MAG:
-    bitSet(CSPORT_MAG, CSBIT_MAG);
+    //bitSet(CSPORT_MAG, CSBIT_MAG);
     break;
   case ACC:
-    bitSet(CSPORT_XL, CSBIT_XL);
+    //bitSet(CSPORT_XL, CSBIT_XL);
     break;
   }
  
   interrupts();
 
   // Set data pin to input
-  bitClear(DIR_REG, DATABIT);
+  //bitClear(DIR_REG, DATABIT);
 
   // Is there a way to verify true success?
   return IMU_SUCCESS;

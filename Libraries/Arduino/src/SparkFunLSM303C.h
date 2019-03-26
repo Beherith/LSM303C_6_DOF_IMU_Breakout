@@ -7,6 +7,8 @@
 #include "LSM303CTypes.h"
 #include "DebugMacros.h"
 
+
+
 #define SENSITIVITY_ACC   0.06103515625   // LSB/mg
 #define SENSITIVITY_MAG   0.00048828125   // LSB/Ga
 
