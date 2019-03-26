@@ -1,3 +1,6 @@
+Changes from main repo : Compiles and works on Esp8266 using arbitrary pins for I2C only. See minimalist example.
+
+
 # SparkFun LSM303C 6 DOF IMU Breakout
 ========================================
 
